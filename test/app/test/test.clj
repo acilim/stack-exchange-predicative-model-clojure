@@ -10,7 +10,6 @@
    :tags ["first" "second" "third"]
    :score 12 })
 
-
 (deftest test-number-of-urls 
   (is
     (getNumberOfURLs testQuestion 2)))
