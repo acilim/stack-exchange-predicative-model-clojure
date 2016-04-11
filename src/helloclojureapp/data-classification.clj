@@ -29,13 +29,18 @@
                  :post_score
                  :accepted_answer_score
                  :comment_score
-                 :number_of_urls
-                 :number_of_stackoverflow_urls
+                 :no_of_urls
+                 :no_of_stackoverflow_urls
                  :title_length
                  :body_length
-                 :number_of_tags
-                 :number_of_short_words]}))
-
+                 :no_of_tags
+                 :no_of_punctuation_marks
+                 :no_of_short_words
+                 :no_of_special_characters
+                 :no_of_lowercase_letters
+                 :no_of_uppercase_letters
+                 :code_snippet_length ]}))
+     
 (defn prepare-dataset
   [dataset]
   (dataset-set-class
@@ -55,10 +60,6 @@
   (classifier-train
     classifier
     (prepare-dataset training-set)))
-
-(defn save-classifier
-  [classifier path]
-  (serialize-to-file classifier path))
 
 (defn evaluate
   [classifier]
