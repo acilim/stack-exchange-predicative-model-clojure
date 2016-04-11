@@ -9,4 +9,4 @@
                  [clj-http "0.6.0"]
                  [ring/ring-json "0.4.0"]
                  [nz.ac.waikato.cms.weka/weka-dev "3.7.7"]
-                 ])
+                 [cc.artifice/clj-ml "0.6.1"]])
