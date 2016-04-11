@@ -24,14 +24,15 @@
 (defn get-questions-from-api 
   "Sends http request to api with given parameters and receives json response"
   [from-date to-date closed]
-	 (:body
+  (:body
     (client/get
-      (str api-url "/search/advanced?fromdate=" from-date "&todate=" to-date "&closed=" closed "&site=stackoverflow&sort=activity&order=desc&filter=withBody" access-data)
+      (str api-url "/search/advanced?fromdate=" from-date "&todate=" to-date "&closed=" closed "&site=stackoverflow&sort=activity&order=desc&filter=withBody&pagesize=500" access-data)
       {:as :json} )))
 
 (defn get-user-by-id-from-api 
   "Gets details about question's owner by their id"
   [userid]
+  (println (str api-url "/users/" userid "?order=desc&sort=reputation&site=stackoverflow" access-data))
   (:body
     (client/get 
       (str api-url "/users/" userid "?order=desc&sort=reputation&site=stackoverflow" access-data)
@@ -73,7 +74,7 @@
       (str api-url "/users/" userid "/comments?order=desc&sort=creation&site=stackoverflow" access-data)
       {:as :json} )))
 
-(defn save-questions 
+(defn collect-questions 
   "Collects closed and not closed questions and saves them to json files"
   []
   (with-open [wrtr (io/writer closed-questions-file)]
