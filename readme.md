@@ -1,4 +1,4 @@
-# StackExchangePredicativeModel
+# Stack Exchange Predicative Model
 
 ## About the project
 
@@ -27,7 +27,7 @@ The project workflow consisted of the following steps:
 * *filter*: withBody, in order to get bodies of the questions
 * *accessToken* and *key* obtained by registering to the api, in order to increase the daily request quota.
 
-The results were saved to files [closedQuestions.json](https://github.com/acilim/StackExchangePredicativeModelClojure/blob/master/data/closedQuestions.json) and [notClosedQuestions.json](https://github.com/acilim/StackExchangePredicativeModelClojure/blob/master/data/notClosedQuestions.json).
+The results were saved to files [closedQuestions.json](https://github.com/acilim/stack-exchange-predicative-model-clojure/blob/master/data/closedQuestions.json) and [notClosedQuestions.json](https://github.com/acilim/stack-exchange-predicative-model-clojure/blob/master/data/notClosedQuestions.json).
 
 2. Adding features and creating the dataset
 ============ 
@@ -75,7 +75,7 @@ The following api methods were used to collect the necessary data:
 * [/users/{ids}/answers](http://api.stackexchange.com/docs/answers-on-users) – returns the answers that the requested user posted
 * [/users/{ids}/comments](http://api.stackexchange.com/docs/comments-on-users) – returns the comments that the requested user posted
 
-Questions' features were saved to .csv files- one used for training: [trainingSet.csv] (https://github.com/acilim/StackExchangePredicativeModelClojure/blob/master/data/trainingSet.csv), with 90% of the data, and the other used for testing the classifiers: [testSet.csv] (https://github.com/acilim/StackExchangePredicativeModelClojure/blob/master/data/testSet.csv), with 10% of the data. Each dataset contains 18 attributes: 17 are numeric (the features), and the 18th is the class attribute with possible values *yes* or *no* (that shows whether or not the question is closed), the one whose value the program is aimed to predict.
+Questions' features were saved to .csv files- one used for training: [trainingSet.csv] (https://github.com/acilim/stack-exchange-predicative-model-clojure/blob/master/data/trainingSet.csv), with 90% of the data, and the other used for testing the classifiers: [testSet.csv] (https://github.com/acilim/stack-exchange-predicative-model-clojure/blob/master/data/testSet.csv), with 10% of the data. Each dataset contains 18 attributes: 17 are numeric (the features), and the 18th is the class attribute with possible values *yes* or *no* (that shows whether or not the question is closed), the one whose value the program is aimed to predict.
 
 
 3. Applying machine learning techniques for classification
