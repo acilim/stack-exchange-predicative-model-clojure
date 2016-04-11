@@ -41,9 +41,15 @@
   (-
     (.getTime
       (new java.util.Date))
-     (get
-       (getUser
-         (getUserId question)) :creation_date)))
+    (not-nil? (get
+                (getUser
+                  (getUserId question)) :creation_date)
+              (get
+                (getUser
+                  (getUserId question)) :creation_date)
+              0)))
+
+  (if (< number 100) "yes" "no")
 
 (defn getBadges [question]
   (get
@@ -136,7 +142,7 @@
   (count
     (re-seq
       (re-pattern "<a href=")
-            (getBody question))))
+      (getBody question))))
 
 (defn getNumberOfStackOverflowURLs
   "Calculates the value of feature C2 : numberOfStackoverflowURLs"
@@ -170,13 +176,11 @@
 (defn getNumberOfPunctuationMarks
   "Calculates the value of feature D4 : numberOfPunctuationMarks"
   [question]
-  (println "Getting feature D4...")  
-  (let [number (atom 0)
-        punctuationMarks ".,!?:;"]
-    (doseq [char (getBody question)] 
-      (if ((.contains punctuationMarks char))
-        (swap! number #(+ % 1))))
-    @number))
+  (println "Getting feature D4...")
+  (count
+    (re-seq
+      (re-pattern "[.,:;!?\\-]")
+      (getBody question))))
 
 (defn getNumberOfShortWords
   "Calculates the value of feature D5 : numberOfShortWords"
@@ -188,94 +192,97 @@
         (swap! number #(+ % 1))))
     @number))
 
-(defn createTrainingDataset
+(defn getNumberOfSpecialCharacters
+  "Calculates the value of feature D6 : numberOfSpecialCharacters"
+  [question]
+  (println "Getting feature D6...")
+  (count
+    (re-seq
+      (re-pattern "[^A-Za-z0-9]")
+      (getBody question))))
+
+(defn getNumberOfLowercaseLetters
+  "Calculates the value of feature D7 : numberOfSpecialCharacters"
+  [question]
+  (println "Getting feature D7...")
+  (count
+    (re-seq
+      (re-pattern "[a-z]")
+      (getBody question))))
+
+(defn getNumberOfUppercaseLetters
+  "Calculates the value of feature D8 : numberOfSpecialCharacters"
+  [question]
+  (println "Getting feature D8...")
+  (count
+    (re-seq
+      (re-pattern "[A-Z]")
+      (getBody question))))
+
+(defn getCodeSnippetLength
+  "Calculates the value of feature D9 : code snippet length"
+  [question]
+  (println "Getting feature D9...")
+  (let [length (atom 0)]
+    (doseq [match (re-seq
+                    (re-pattern "<code>(.*?)</code>")
+                    (getBody question))]
+      (swap! 
+        length 
+        #(+ % (count (second match)))))
+    @length))
+
+(defn get-features 
+  [question closed]
+  [closed
+   (getAgeOfAccount question)
+   (getBadgeScore question)
+   (getPostsWithNegativeScores question)
+   (getPostScore question)
+   (getAcceptedAnswerScore question)
+   (getCommentScore question)
+   (getNumberOfURLs question)
+   (getNumberOfStackOverflowURLs question)
+   (getTitleLength question)
+   (getBodyLength question)
+   (getNumberOfTags question)
+   (getNumberOfPunctuationMarks question)
+   (getNumberOfShortWords question)
+   (getNumberOfSpecialCharacters question)
+   (getNumberOfLowercaseLetters question)
+   (getNumberOfUppercaseLetters question)
+   (getCodeSnippetLength question)])
+
+(defn create-dataset
   "Creates csv file with questions' features"
+  [path closedQuestions notClosedQuestions]
+  (println (str "Writing to " path "..."))
+  (with-open [wrtr (io/writer path)]
+    (csv/write-csv 
+      wrtr
+      [["is_closed" "age_of_account" "badge_score" "posts_with_negative_scores" "post_score" "accepted_answer_score" "comment_score" "no_of_urls" "no_of_stackoverflow_urls" "title_length" "body_length" "no_of_tags" "no_of_punctuation_marks" "no_of_short_words" "no_of_special_characters" "no_of_lowercase_letters" "no_of_uppercase_letters" "code_snippet_length"]])
+    (doseq [question closedQuestions]
+      (println (str "\nGetting data about question: " (get question :question_id)))
+      (csv/write-csv
+        wrtr 
+        [(get-features  question "yes")]))
+    (doseq [question notClosedQuestions]
+       (println (str "\nGetting data about question: " (get question :question_id)))
+      (csv/write-csv
+        wrtr 
+        [(get-features  question "no")])))
+  (println (str "Dataset created and saved to " path)))
+
+
+(defn create-training-dataset
   []
   (println "Creating training dataset.....")
-  (with-open [wrtr (io/writer training-set-file)]
-    (csv/write-csv wrtr [["is_closed" "age_of_account" "badge_score" "posts_with_negative_scores" "post_score" "accepted_answer_score" "comment_score" "number_of_urls" "number_of_stackoverflow_urls" "title_length" "body_length" "number_of_tags" "number_of_short_words"]])
-    (doseq [question (take 20 closed-questions-json)]
-      (csv/write-csv
-        wrtr 
-        [["closed"
-          (getAgeOfAccount question)
-          (getBadgeScore question)
-          (getPostsWithNegativeScores question)
-          (getPostScore question)
-          (getAcceptedAnswerScore question)
-          (getCommentScore question)
-          (getNumberOfURLs question)
-          (getNumberOfStackOverflowURLs question)
-          (getTitleLength question)
-          (getBodyLength question)
-          (getNumberOfTags question)
-          (getNumberOfShortWords question)
-          ]])
-      (println "Question written to csv.\n"))
-    (println "Closed questions done.\n")
-    (doseq [question (take 20 not-closed-questions-json)]
-      (csv/write-csv
-        wrtr 
-        [["not_closed"
-          (getAgeOfAccount question)
-          (getBadgeScore question)
-          (getPostsWithNegativeScores question)
-          (getPostScore question)
-          (getAcceptedAnswerScore question)
-          (getCommentScore question)
-          (getNumberOfURLs question)
-          (getNumberOfStackOverflowURLs question)
-          (getTitleLength question)
-          (getBodyLength question)
-          (getNumberOfTags question)
-          (getNumberOfShortWords question)
-          ]])
-      (println "Question written to csv.\n"))
-    (println "Not closed questions done.")))
+  (create-dataset training-set-file (take 450 closed-questions-json) (take 450 not-closed-questions-json)))
 
-(defn createTestDataset
+(defn create-test-dataset
   []
   (println "Creating test dataset.....")
-  (with-open [wrtr (io/writer test-set-file)]
-    (csv/write-csv wrtr [["is_closed" "age_of_account" "badge_score" "posts_with_negative_scores" "post_score" "accepted_answer_score" "comment_score" "number_of_urls" "number_of_stackoverflow_urls" "title_length" "body_length" "number_of_tags" "number_of_short_words"]])
-    (doseq [question (take-last 10 closed-questions-json)]
-      (csv/write-csv
-        wrtr 
-        [["closed"
-          (getAgeOfAccount question)
-          (getBadgeScore question)
-          (getPostsWithNegativeScores question)
-          (getPostScore question)
-          (getAcceptedAnswerScore question)
-          (getCommentScore question)
-          (getNumberOfURLs question)
-          (getNumberOfStackOverflowURLs question)
-          (getTitleLength question)
-          (getBodyLength question)
-          (getNumberOfTags question)
-          (getNumberOfShortWords question)
-          ]])
-      (println "Question written to csv.\n"))
-    (println "Closed questions done.\n")
-    (doseq [question (take-last 10 not-closed-questions-json)]
-      (csv/write-csv
-        wrtr 
-        [["not_closed"
-          (getAgeOfAccount question)
-          (getBadgeScore question)
-          (getPostsWithNegativeScores question)
-          (getPostScore question)
-          (getAcceptedAnswerScore question)
-          (getCommentScore question)
-          (getNumberOfURLs question)
-          (getNumberOfStackOverflowURLs question)
-          (getTitleLength question)
-          (getBodyLength question)
-          (getNumberOfTags question)
-          (getNumberOfShortWords question)
-          ]])
-      (println "Question written to csv.\n"))
-    (println "Not closed questions done.")))
+  (create-dataset test-set-file (take-last 50 closed-questions-json) (take-last 50 not-closed-questions-json)))
 
-(createTrainingDataset)
-(createTestDataset)
+(create-training-dataset)
+;;(create-test-dataset)
