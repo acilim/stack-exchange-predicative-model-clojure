@@ -5,18 +5,18 @@
   (:use [helloclojureapp.data-collection]
         [clojure.java.io :as io]))
 
-(def notClosedPath "data/notClosedQuestions.json")
-(def closedPath "data/closedQuestions.json")
+(def training-set-file "data/trainingSet.csv")
+(def test-set-file "data/testSet.csv")
 
-(def closedQuestionsJson 
+(def closed-questions-json 
   (get
     (json/read-str
-      (slurp closedPath) :key-fn keyword) :items))
+      (slurp closed-questions-file) :key-fn keyword) :items))
 
-(def notClosedQuestionsJson
+(def not-closed-questions-json
   (get
     (json/read-str
-      (slurp notClosedPath) :key-fn keyword) :items))
+      (slurp not-closed-questions-file) :key-fn keyword) :items))
 
 (defn getScore [question]
   (get question :score))
@@ -29,7 +29,7 @@
   [id]
   (first
     (get
-      (getUserById id) :items)))
+      (get-user-by-id-from-api id) :items)))
 
 (defn getBody [question]
   (get question :body))
@@ -38,31 +38,33 @@
   "Calculates the value of feature A1: ageOfAccount"
   [question]
   (println "Getting feature A1...")
-  (- (.getTime
-       (new java.util.Date))
+  (-
+    (.getTime
+      (new java.util.Date))
      (get
        (getUser
          (getUserId question)) :creation_date)))
 
 (defn getBadges [question]
   (get
-    (getBadgesByUserId
+    (get-badges-by-user-id-from-api
       (getUserId question)) :items))
 
 (defn getBadgeData [badge]
-  (getBadgeById (get badge :badge_id)))
+  (get-badge-by-id-from-api (get badge :badge_id)))
 
 (defn getBadge [id]
   (first
     (get
-      (getBadgeById id) :items)))
+      (get-badge-by-id-from-api id) :items)))
 
 (defn getBadgeScore 
   "Calculates the value of feature A2 : badgeScore"
   [question]
   (println "Getting feature A2...")
   (let [score (atom 0)]
-    (doseq [badge (getBadges question)] 
+    (doseq 
+      [badge (getBadges question)] 
       (if 
         (> 
           (get (getBadge (get badge :badge_id)) :award_count) 0)
@@ -71,17 +73,17 @@
 
 (defn getQuestionsByUser [question]
   (get
-    (getQuestionsOfUser
+    (get-user's-questions-from-api
       (getUserId question)) :items))
 
 (defn getAnswersByUser [question]
   (get
-    (getAnswersOfUser
+    (get-user's-answers-from-api
       (getUserId question)) :items))
 
 (defn getCommentsByUser [question]
   (get
-    (getCommentsOfUser
+    (get-user's-comments-from-api
       (getUserId question)) :items))
 
 (defn getPostsWithNegativeScores
@@ -131,15 +133,18 @@
   "Calculates the value of feature C1 : numberOfURLs"
   [question]
   (println "Getting feature C1...")
-  (count (re-seq (re-pattern "<a href=")
-                 (getBody question))))
+  (count
+    (re-seq
+      (re-pattern "<a href=")
+            (getBody question))))
 
 (defn getNumberOfStackOverflowURLs
   "Calculates the value of feature C2 : numberOfStackoverflowURLs"
   [question]
   (println "Getting feature C2...")  
-  (count (re-seq #"stackoverflow/"
-                 (getBody question))))
+  (count
+    (re-seq #"stackoverflow/"
+            (getBody question))))
 
 (defn getTitleLength
   "Calculates the value of feature D1 : titleLength"
@@ -183,12 +188,13 @@
         (swap! number #(+ % 1))))
     @number))
 
-(defn createDatsetFile
+(defn createTrainingDataset
   "Creates csv file with questions' features"
   []
-  (with-open [wrtr (io/writer "data/dataset.csv")]
+  (println "Creating training dataset.....")
+  (with-open [wrtr (io/writer training-set-file)]
     (csv/write-csv wrtr [["is_closed" "age_of_account" "badge_score" "posts_with_negative_scores" "post_score" "accepted_answer_score" "comment_score" "number_of_urls" "number_of_stackoverflow_urls" "title_length" "body_length" "number_of_tags" "number_of_short_words"]])
-    (doseq [question (take 1 closedQuestionsJson)]
+    (doseq [question (take 20 closed-questions-json)]
       (csv/write-csv
         wrtr 
         [["closed"
@@ -205,8 +211,71 @@
           (getNumberOfTags question)
           (getNumberOfShortWords question)
           ]])
-      (println "Question written to csv.")
-      (println "")
-      )))
+      (println "Question written to csv.\n"))
+    (println "Closed questions done.\n")
+    (doseq [question (take 20 not-closed-questions-json)]
+      (csv/write-csv
+        wrtr 
+        [["not_closed"
+          (getAgeOfAccount question)
+          (getBadgeScore question)
+          (getPostsWithNegativeScores question)
+          (getPostScore question)
+          (getAcceptedAnswerScore question)
+          (getCommentScore question)
+          (getNumberOfURLs question)
+          (getNumberOfStackOverflowURLs question)
+          (getTitleLength question)
+          (getBodyLength question)
+          (getNumberOfTags question)
+          (getNumberOfShortWords question)
+          ]])
+      (println "Question written to csv.\n"))
+    (println "Not closed questions done.")))
 
-(createDatsetFile)
+(defn createTestDataset
+  []
+  (println "Creating test dataset.....")
+  (with-open [wrtr (io/writer test-set-file)]
+    (csv/write-csv wrtr [["is_closed" "age_of_account" "badge_score" "posts_with_negative_scores" "post_score" "accepted_answer_score" "comment_score" "number_of_urls" "number_of_stackoverflow_urls" "title_length" "body_length" "number_of_tags" "number_of_short_words"]])
+    (doseq [question (take-last 10 closed-questions-json)]
+      (csv/write-csv
+        wrtr 
+        [["closed"
+          (getAgeOfAccount question)
+          (getBadgeScore question)
+          (getPostsWithNegativeScores question)
+          (getPostScore question)
+          (getAcceptedAnswerScore question)
+          (getCommentScore question)
+          (getNumberOfURLs question)
+          (getNumberOfStackOverflowURLs question)
+          (getTitleLength question)
+          (getBodyLength question)
+          (getNumberOfTags question)
+          (getNumberOfShortWords question)
+          ]])
+      (println "Question written to csv.\n"))
+    (println "Closed questions done.\n")
+    (doseq [question (take-last 10 not-closed-questions-json)]
+      (csv/write-csv
+        wrtr 
+        [["not_closed"
+          (getAgeOfAccount question)
+          (getBadgeScore question)
+          (getPostsWithNegativeScores question)
+          (getPostScore question)
+          (getAcceptedAnswerScore question)
+          (getCommentScore question)
+          (getNumberOfURLs question)
+          (getNumberOfStackOverflowURLs question)
+          (getTitleLength question)
+          (getBodyLength question)
+          (getNumberOfTags question)
+          (getNumberOfShortWords question)
+          ]])
+      (println "Question written to csv.\n"))
+    (println "Not closed questions done.")))
+
+(createTrainingDataset)
+(createTestDataset)
