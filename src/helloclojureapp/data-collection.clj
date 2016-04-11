@@ -3,86 +3,84 @@
             [clojure.data.json :as json])
   (:use [clojure.java.io :as io]))
 
-(def apiUrl
+(def api-url
   "https://api.stackexchange.com/2.2")
 
-(def accessToken
+(def access-token
   "ITpdfu(iqioZyEj1Rroekw))")
 
-(def apiKey
+(def api-key
   "MAHU*9Isu*x3DoGH6dVZbQ((")
 
-(def accessData
-  (str "&access_token=" accessToken "&key=" apiKey))
+(def access-data
+  (str "&access_token=" access-token "&key=" api-key))
 
-(def closedQuestionsPath
+(def closed-questions-file
   "data/closedQuestions.json")
 
-(def notClosedQuestionsPath
+(def not-closed-questions-file
   "data/notClosedQuestions.json")
 
-(defn getQuestionsFromApi 
+(defn get-questions-from-api 
   "Sends http request to api with given parameters and receives json response"
-  [fromDate toDate closed]
+  [from-date to-date closed]
 	 (:body
     (client/get
-      (str apiUrl "/search/advanced?fromdate=" fromDate "&todate=" toDate "&closed=" closed "&site=stackoverflow&sort=activity&order=desc&filter=withBody" accessData)
+      (str api-url "/search/advanced?fromdate=" from-date "&todate=" to-date "&closed=" closed "&site=stackoverflow&sort=activity&order=desc&filter=withBody" access-data)
       {:as :json} )))
 
-(defn getUserById 
+(defn get-user-by-id-from-api 
   "Gets details about question's owner by their id"
   [userid]
   (:body
     (client/get 
-      (str apiUrl "/users/" userid "?order=desc&sort=reputation&site=stackoverflow" accessData)
+      (str api-url "/users/" userid "?order=desc&sort=reputation&site=stackoverflow" access-data)
       {:as :json} )))
 
-(defn getBadgesByUserId 
+(defn get-badges-by-user-id-from-api 
   "Gets user's badges"
   [userid]
   (:body
     (client/get 
-      (str apiUrl "/users/" userid "/badges?order=desc&sort=rank&site=stackoverflow" accessData)
+      (str api-url "/users/" userid "/badges?order=desc&sort=rank&site=stackoverflow" access-data)
       {:as :json} )))
 
-(defn getBadgeById
+(defn get-badge-by-id-from-api
   [badgeId]
   (:body
     (client/get 
-      (str apiUrl "/badges/" badgeId "?order=desc&sort=rank&site=stackoverflow" accessData)
+      (str api-url "/badges/" badgeId "?order=desc&sort=rank&site=stackoverflow" access-data)
       {:as :json} )))
 
-(defn getQuestionsOfUser
+(defn get-user's-questions-from-api
   [userid]
   (:body
     (client/get 
-      (str apiUrl "/users/" userid "/questions?order=desc&sort=activity&site=stackoverflow" accessData)
+      (str api-url "/users/" userid "/questions?order=desc&sort=activity&site=stackoverflow" access-data)
       {:as :json} )))
 
-(defn getAnswersOfUser
+(defn get-user's-answers-from-api
   [userid]
   (:body
     (client/get 
-      (str apiUrl "/users/" userid "/answers?order=desc&sort=activity&site=stackoverflow" accessData)
+      (str api-url "/users/" userid "/answers?order=desc&sort=activity&site=stackoverflow" access-data)
       {:as :json} )))
 
-(defn getCommentsOfUser
+(defn get-user's-comments-from-api
   [userid]
   (:body
     (client/get 
-      (str apiUrl "/users/" userid "/comments?order=desc&sort=creation&site=stackoverflow" accessData)
+      (str api-url "/users/" userid "/comments?order=desc&sort=creation&site=stackoverflow" access-data)
       {:as :json} )))
 
-(defn saveQuestionData 
+(defn save-questions 
   "Collects closed and not closed questions and saves them to json files"
   []
-  (with-open [wrtr (io/writer closedQuestionsPath)]
+  (with-open [wrtr (io/writer closed-questions-file)]
     (.write wrtr
       (json/write-str 
-        (getQuestionsFromApi true 1404172800 1419984000))))
-  (with-open [wrtr (io/writer notClosedQuestionsPath)]
+        (get-questions-from-api true 1404172800 1419984000))))
+  (with-open [wrtr (io/writer not-closed-questions-file)]
     (.write wrtr
       (json/write-str 
-        (getQuestionsFromApi false 1404172800 1419984000)))))
-
-
+        (get-questions-from-api false 1404172800 1419984000)))))
