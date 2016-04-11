@@ -1,12 +1,13 @@
 (ns helloclojureapp.data-processing
-  (:require [clj-http.client :as client]
-            [clojure.data.json :as json]
+  (:require [clojure.data.json :as json]
             [clojure.data.csv :as csv])
   (:use [helloclojureapp.data-collection]
         [clojure.java.io :as io]))
 
-(def training-set-file "data/trainingSet.csv")
-(def test-set-file "data/testSet.csv")
+(def training-set-file
+  "data/trainingSet.csv")
+(def test-set-file
+  "data/testSet.csv")
 
 (def closed-questions-json 
   (get
@@ -41,15 +42,13 @@
   (-
     (.getTime
       (new java.util.Date))
-    (not-nil? (get
+    (if (nil? (get
                 (getUser
-                  (getUserId question)) :creation_date)
-              (get
+                  (getUserId question)) :creation_date))
+                0
+                (get
                 (getUser
-                  (getUserId question)) :creation_date)
-              0)))
-
-  (if (< number 100) "yes" "no")
+                  (getUserId question)) :creation_date))))
 
 (defn getBadges [question]
   (get
@@ -57,7 +56,8 @@
       (getUserId question)) :items))
 
 (defn getBadgeData [badge]
-  (get-badge-by-id-from-api (get badge :badge_id)))
+  (get-badge-by-id-from-api
+    (get badge :badge_id)))
 
 (defn getBadge [id]
   (first
@@ -73,8 +73,12 @@
       [badge (getBadges question)] 
       (if 
         (> 
-          (get (getBadge (get badge :badge_id)) :award_count) 0)
-        (swap! score #(+ % (/ 1.0 (get badge :award_count))))))
+          (get
+            (getBadge
+              (get badge :badge_id)) :award_count) 0)
+        (swap!
+          score
+          #(+ % (/ 1.0 (get badge :award_count))))))
     @score))
 
 (defn getQuestionsByUser [question]
@@ -233,8 +237,8 @@
     @length))
 
 (defn get-features 
-  [question closed]
-  [closed
+  [question is-closed]
+  [is-closed
    (getAgeOfAccount question)
    (getBadgeScore question)
    (getPostsWithNegativeScores question)
@@ -265,12 +269,12 @@
       (println (str "\nGetting data about question: " (get question :question_id)))
       (csv/write-csv
         wrtr 
-        [(get-features  question "yes")]))
+        [(get-features question "yes")]))
     (doseq [question notClosedQuestions]
        (println (str "\nGetting data about question: " (get question :question_id)))
       (csv/write-csv
         wrtr 
-        [(get-features  question "no")])))
+        [(get-features question "no")])))
   (println (str "Dataset created and saved to " path)))
 
 
@@ -284,5 +288,5 @@
   (println "Creating test dataset.....")
   (create-dataset test-set-file (take-last 50 closed-questions-json) (take-last 50 not-closed-questions-json)))
 
-(create-training-dataset)
+;;(create-training-dataset)
 ;;(create-test-dataset)
