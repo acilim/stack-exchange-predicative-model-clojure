@@ -135,7 +135,7 @@ Confusion matrix:
 | |  |  b (not_closed) |
 
 
-6. Technical realisation
+5. Technical realisation
 =============================
 
 
@@ -150,7 +150,7 @@ The application was written in Clojure programming language, using CounterClockw
  * [cc.artifice/clj-ml "0.6.1"]
 
  
-7. Acknowledgements 
+6. Acknowledgements 
 ========================
 
 The project was developed as part of the assignment for the course [Software Engineering Tools and Methodology](http://ai.fon.bg.ac.rs/master/alati-i-metode-softverskog-inzenjerstva/) at the [Faculty of Organization Sciences](http://fon.rs), University of Belgrade, Serbia.
