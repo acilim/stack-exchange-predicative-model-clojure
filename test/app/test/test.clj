@@ -10,44 +10,45 @@
    :tags ["first" "second" "third"]
    :score 12 })
 
+
 (deftest test-number-of-urls 
   (is
-    (getNumberOfURLs testQuestion 2)))
+    (getNumberOfURLs testQuestion) 2))
 
 (deftest test-number-of-stackoverflow-urls 
   (is
-    (getNumberOfURLs testQuestion 1)))
+    (getNumberOfURLs testQuestion) 1))
 
 (deftest test-title-length 
   (is
-    (getTitleLength testQuestion 12)))
+    (getTitleLength testQuestion) 12))
 
 (deftest test-body-length 
   (is
-    (getBodyLength testQuestion 230)))
+    (getBodyLength testQuestion) 230))
 
 (deftest test-num-of-tags
   (is
-    (getNumberOfTags testQuestion 3)))
+    (getNumberOfTags testQuestion) 3))
 
 (deftest test-num-of-punctuation_marks
   (is
-    (getNumberOfPunctuationMarks testQuestion 16)))
+    (getNumberOfPunctuationMarks testQuestion) 16))
 
 (deftest test-num-of-short-words
   (is
-    (getNumberOfShortWords testQuestion 6)))
+    (getNumberOfShortWords testQuestion) 6))
 
 (deftest test-num-of-lowercase-letters
   (is
-    (getNumberOfLowercaseLetters testQuestion 141)))
+    (getNumberOfLowercaseLetters testQuestion) 141))
 
 (deftest test-num-of-uppercase-letters
   (is
-    (getNumberOfUppercaseLetters testQuestion 4)))
+    (getNumberOfUppercaseLetters testQuestion) 4))
 
 (deftest test-code-snippet-length
   (is
-    (getNumberOfUppercaseLetters testQuestion 9)))
+    (getNumberOfUppercaseLetters testQuestion) 9))
 
-
+(run-all-tests)
