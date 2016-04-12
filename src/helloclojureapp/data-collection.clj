@@ -32,7 +32,6 @@
 (defn get-user-by-id-from-api 
   "Gets details about question's owner by their id"
   [userid]
-  (println (str api-url "/users/" userid "?order=desc&sort=reputation&site=stackoverflow" access-data))
   (:body
     (client/get 
       (str api-url "/users/" userid "?order=desc&sort=reputation&site=stackoverflow" access-data)
