@@ -1,0 +1,55 @@
+***Naive Bayes results: 
+
+Correctly Classified Instances         150               75      %
+Incorrectly Classified Instances        50               25      %
+Kappa statistic                          0.5   
+Mean absolute error                      0.2598
+Root mean squared error                  0.3976
+Relative absolute error                 51.9602 %
+Root relative squared error             79.5154 %
+Coverage of cases (0.95 level)          98.5    %
+Mean rel. region size (0.95 level)      79.25   %
+Total Number of Instances              200     
+'n=== Confusion Matrix ===
+
+  a  b   <-- classified as
+ 75 25 |  a = closed
+ 25 75 |  b = not_closed
+
+***SMO results: 
+
+Correctly Classified Instances         162               81      %
+Incorrectly Classified Instances        38               19      %
+Kappa statistic                          0.62  
+Mean absolute error                      0.19  
+Root mean squared error                  0.4359
+Relative absolute error                 38      %
+Root relative squared error             87.178  %
+Coverage of cases (0.95 level)          81      %
+Mean rel. region size (0.95 level)      50      %
+Total Number of Instances              200     
+
+=== Confusion Matrix ===
+
+  a  b   <-- classified as
+ 71 29 |  a = closed
+  9 91 |  b = not_closed
+
+***Logistic regression results:
+
+Correctly Classified Instances         162               81      %
+Incorrectly Classified Instances        38               19      %
+Kappa statistic                          0.62  
+Mean absolute error                      0.19  
+Root mean squared error                  0.4359
+Relative absolute error                 38      %
+Root relative squared error             87.178  %
+Coverage of cases (0.95 level)          81      %
+Mean rel. region size (0.95 level)      50      %
+Total Number of Instances              200     
+
+=== Confusion Matrix ===
+
+  a  b   <-- classified as
+ 71 29 |  a = closed
+  9 91 |  b = not_closed
