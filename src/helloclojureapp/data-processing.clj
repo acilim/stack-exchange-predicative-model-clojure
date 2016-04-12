@@ -45,10 +45,10 @@
     (if (nil? (get
                 (getUser
                   (getUserId question)) :creation_date))
-                0
-                (get
-                (getUser
-                  (getUserId question)) :creation_date))))
+      0
+      (get
+        (getUser
+          (getUserId question)) :creation_date))))
 
 (defn getBadges [question]
   (get
@@ -238,8 +238,7 @@
 
 (defn get-features 
   [question is-closed]
-  [is-closed
-   (getAgeOfAccount question)
+  [(getAgeOfAccount question)
    (getBadgeScore question)
    (getPostsWithNegativeScores question)
    (getPostScore question)
@@ -255,7 +254,8 @@
    (getNumberOfSpecialCharacters question)
    (getNumberOfLowercaseLetters question)
    (getNumberOfUppercaseLetters question)
-   (getCodeSnippetLength question)])
+   (getCodeSnippetLength question)
+   is-closed])
 
 (defn create-dataset
   "Creates csv file with questions' features"
@@ -264,29 +264,55 @@
   (with-open [wrtr (io/writer path)]
     (csv/write-csv 
       wrtr
-      [["is_closed" "age_of_account" "badge_score" "posts_with_negative_scores" "post_score" "accepted_answer_score" "comment_score" "no_of_urls" "no_of_stackoverflow_urls" "title_length" "body_length" "no_of_tags" "no_of_punctuation_marks" "no_of_short_words" "no_of_special_characters" "no_of_lowercase_letters" "no_of_uppercase_letters" "code_snippet_length"]])
+      [["age_of_account"
+        "badge_score"
+        "posts_with_neg_score"
+        "post_score"
+        "accepted_answer_score"
+        "comment_score" 
+        "num_of_URLs" 
+        "num_of_stackOverflow_URLs"
+        "title_length" 
+        "body_length"
+        "num_of_tags"
+        "num_of_punctuation_marks"
+        "num_of_short_words" 
+        "num_of_special_characters"
+        "num_of_lower_case_characters" 
+        "num_of_upper_case_characters"
+        "code_snippet_length"
+        "class"]])
     (doseq [question closedQuestions]
-      (println (str "\nGetting data about question: " (get question :question_id)))
+      (println (str "\nGetting data about question: "
+                    (get question :question_id)))
       (csv/write-csv
         wrtr 
-        [(get-features question "yes")]))
+        [(get-features question "closed")]))
     (doseq [question notClosedQuestions]
-       (println (str "\nGetting data about question: " (get question :question_id)))
+      (println 
+        (str "\nGetting data about question: " 
+             (get question :question_id)))
       (csv/write-csv
         wrtr 
-        [(get-features question "no")])))
-  (println (str "Dataset created and saved to " path)))
-
+        [(get-features question "not_closed")])))
+  (println
+    (str "Dataset created and saved to " path)))
 
 (defn create-training-dataset
   []
   (println "Creating training dataset.....")
-  (create-dataset training-set-file (take 450 closed-questions-json) (take 450 not-closed-questions-json)))
+  (create-dataset
+    training-set-file 
+    (take 400 closed-questions-json) 
+    (take 400 not-closed-questions-json)))
 
 (defn create-test-dataset
   []
   (println "Creating test dataset.....")
-  (create-dataset test-set-file (take-last 50 closed-questions-json) (take-last 50 not-closed-questions-json)))
+  (create-dataset
+    test-set-file
+    (take-last 100 closed-questions-json)
+    (take-last 100 not-closed-questions-json)))
 
 ;;(create-training-dataset)
 ;;(create-test-dataset)
