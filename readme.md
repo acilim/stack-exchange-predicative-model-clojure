@@ -75,7 +75,7 @@ The following api methods were used to collect the necessary data:
 * [/users/{ids}/answers](http://api.stackexchange.com/docs/answers-on-users) – returns the answers that the requested user posted
 * [/users/{ids}/comments](http://api.stackexchange.com/docs/comments-on-users) – returns the comments that the requested user posted
 
-Questions' features were saved to .csv files- one used for training: [trainingSet.csv] (https://github.com/acilim/stack-exchange-predicative-model-clojure/blob/master/data/trainingSet.csv), with 90% of the data, and the other used for testing the classifiers: [testSet.csv] (https://github.com/acilim/stack-exchange-predicative-model-clojure/blob/master/data/testSet.csv), with 10% of the data. Each dataset contains 18 attributes: 17 are numeric (the features), and the 18th is the class attribute with possible values *yes* or *no* (that shows whether or not the question is closed), the one whose value the program is aimed to predict.
+Questions' features were saved to .csv files- one used for training: [trainingSet.csv] (https://github.com/acilim/stack-exchange-predicative-model-clojure/blob/master/data/trainingSet.csv), with 80% of the data, and the other used for testing the classifiers: [testSet.csv] (https://github.com/acilim/stack-exchange-predicative-model-clojure/blob/master/data/testSet.csv), with 20% of the data. Each dataset contains 18 attributes: 17 are numeric (the features), and the 18th is the class attribute with possible values *closed* or *not_closed* (that shows whether or not the question is closed), the one whose value the program is aimed to predict.
 
 
 3. Applying machine learning techniques for classification
@@ -94,50 +94,40 @@ All the clasiffiers were trained on the training dataset and later evaluated usi
 
 **Naive Bayes**
 
-| DataSet | Correctly classified instances % | Precision | Recall | F1 |
-| --- | ----------- | ------------- | ----------- | ---- |
-| Training  |   |   |   |   |
-| Test|  |   |  | |  |
+Correctly classified instances: 75%
 
 Confusion matrix:
 
 | a | b  | <-- classified as |
 | --- | --- | --------- |
-| |  | a (closed) |
-|  |  | b (not_closed) |
+| 75 |  25 | a (closed) |
+| 25 | 75  | b (not_closed) |
 
 **Support Vector Machines**
 
-| DataSet | Correctly classified instances % | Precision | Recall | F1 |
-| --- | ----------- | ------------- | ----------- | ---- |
-| Training  |   |   |   |   |
-| Test|  |   |  | |  |
+Correctly classified instances: 81%
 
 Confusion matrix:
 
 | a | b  | <-- classified as |
 | --- | --- | ------------ |
-| |  |  a (closed) |
-| |  |  b (not_closed) |
+| 71 |  29|  a (closed) |
+| 9 | 91 |  b (not_closed) |
 
 **Logistic Regression**
 
-| DataSet | Correctly classified instances % | Precision | Recall | F1 |
-| --- | ----------- | ------------- | ----------- | ---- |
-| Training  |  |   |   |   |
-| Test|  |   |  | | |
+Correctly classified instances: 81%
 
 Confusion matrix:
 
 | a | b  | <-- classified as |
 | --- | --- | ------------ |
-| |  |  a (closed) |
-| |  |  b (not_closed) |
+| 71 |  29|  a (closed) |
+| 9 | 91 |  b (not_closed) |
 
 
 5. Technical realisation
 =============================
-
 
 The application was written in Clojure programming language, using CounterClockwise IDE. The following dependencies were added to the project:
 
