@@ -25,26 +25,26 @@
                 :attributes
                 [:age_of_account
                  :badge_score
-                 :posts_with_negative_scores
+                 :posts_with_neg_score
                  :post_score
                  :accepted_answer_score
                  :comment_score
-                 :no_of_urls
-                 :no_of_stackoverflow_urls
+                 :num_of_URLs
+                 :num_of_stackOverflow_URLs
                  :title_length
                  :body_length
-                 :no_of_tags
-                 :no_of_punctuation_marks
-                 :no_of_short_words
-                 :no_of_special_characters
-                 :no_of_lowercase_letters
-                 :no_of_uppercase_letters
+                 :num_of_tags
+                 :num_of_punctuation_marks
+                 :num_of_short_words
+                 :num_of_special_characters
+                 :num_of_lower_case_characters
+                 :num_of_upper_case_characters
                  :code_snippet_length ]}))
      
 (defn prepare-dataset
   [dataset]
   (dataset-set-class
-    (filter-apply discretize dataset) 0))
+    (filter-apply discretize dataset) 17))
 
 (def naive-bayes-classifier
   (make-classifier :bayes :naive))
@@ -60,6 +60,12 @@
   (classifier-train
     classifier
     (prepare-dataset training-set)))
+
+(defn train-classifiers
+  []  
+  (train-classifier naive-bayes-classifier)
+  (train-classifier support-vector-machines-classifier)
+  (train-classifier logistic-regression-classifier))
 
 (defn evaluate
   [classifier]
@@ -86,11 +92,11 @@
         "\n***Logistic regression results:\n"
         (:summary (evaluate support-vector-machines-classifier))
         "\n"
-        (:confusion-matrix (evaluate support-vector-machines-classifier))))))
+        (:confusion-matrix (evaluate support-vector-machines-classifier)))))
+  (println
+    (str "Classification results saved to " classifier-evaluation-file)))
 
-;;(train-classifier naive-bayes-classifier)
-;;(train-classifier support-vector-machines-classifier)
-;;(train-classifier logistic-regression-classifier)
+;;(train-classifiers)
 ;;(save-results)
 
 
