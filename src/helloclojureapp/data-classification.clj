@@ -95,8 +95,21 @@
         (:confusion-matrix (evaluate support-vector-machines-classifier)))))
   (println
     (str "Classification results saved to " classifier-evaluation-file)))
+  
+(defn measure-performance-of
+  "Measures the performance of a given classifier"
+  [classifier]
+  (with-progress-reporting 
+    (bench
+      (evaluate classifier) :verbose)))
+
+(defn measure-performance  []
+  (measure-performance-of naive-bayes-classifier)
+  (measure-performance-of support-vector-machines-classifier)
+  (measure-performance-of logistic-regression-classifier))
 
 ;;(train-classifiers)
 ;;(save-results)
+;;(measure-performance)
 
 
