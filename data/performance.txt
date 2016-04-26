@@ -1,0 +1,79 @@
+***Naive Bayes results: 
+Warming up for JIT optimisations 10000000000 ...
+  compilation occurred before 6809 iterations
+Estimating execution count ...
+Sampling ...
+Final GC...
+Checking GC...
+Finding outliers ...
+Bootstrapping ...
+Checking outlier significance
+amd64 Linux 3.16.0-38-generic 4 cpu(s)
+Java HotSpot(TM) 64-Bit Server VM 25.66-b17
+Runtime arguments: -Dfile.encoding=UTF-8 -Dclojure.compile.path=/home/milica/stack-exchange/target/classes -Dhelloclojureapp.version=0.1.0-SNAPSHOT -Dclojure.debug=false
+Evaluation count : 62820 in 60 samples of 1047 calls.
+      Execution time sample mean : 957.034221 µs
+             Execution time mean : 957.068363 µs
+Execution time sample std-deviation : 5.063284 µs
+    Execution time std-deviation : 5.196414 µs
+   Execution time lower quantile : 953.936649 µs ( 2.5%)
+   Execution time upper quantile : 973.258173 µs (97.5%)
+                   Overhead used : 0.887243 ns
+
+Found 10 outliers in 60 samples (16.6667 %)
+	low-severe	 1 (1.6667 %)
+	low-mild	 9 (15.0000 %)
+ Variance from outliers : 1.6389 % Variance is slightly inflated by outliers
+
+***SMO results: 
+Warming up for JIT optimisations 10000000000 ...
+  compilation occurred before 2355 iterations
+Estimating execution count ...
+Sampling ...
+Final GC...
+Checking GC...
+Finding outliers ...
+Bootstrapping ...
+Checking outlier significance
+amd64 Linux 3.16.0-38-generic 4 cpu(s)
+Java HotSpot(TM) 64-Bit Server VM 25.66-b17
+Runtime arguments: -Dfile.encoding=UTF-8 -Dclojure.compile.path=/home/milica/stack-exchange/target/classes -Dhelloclojureapp.version=0.1.0-SNAPSHOT -Dclojure.debug=false
+Evaluation count : 84900 in 60 samples of 1415 calls.
+      Execution time sample mean : 703.502988 µs
+             Execution time mean : 703.482242 µs
+Execution time sample std-deviation : 9.192678 µs
+    Execution time std-deviation : 9.318753 µs
+   Execution time lower quantile : 696.427028 µs ( 2.5%)
+   Execution time upper quantile : 725.603942 µs (97.5%)
+                   Overhead used : 0.887243 ns
+
+Found 4 outliers in 60 samples (6.6667 %)
+	low-severe	 4 (6.6667 %)
+ Variance from outliers : 1.6389 % Variance is slightly inflated by outliers
+
+***Logistic regression results: 
+Warming up for JIT optimisations 10000000000 ...
+  compilation occurred before 1502 iterations
+  compilation occurred before 6005 iterations
+Estimating execution count ...
+Sampling ...
+Final GC...
+Checking GC...
+Finding outliers ...
+Bootstrapping ...
+Checking outlier significance
+amd64 Linux 3.16.0-38-generic 4 cpu(s)
+Java HotSpot(TM) 64-Bit Server VM 25.66-b17
+Runtime arguments: -Dfile.encoding=UTF-8 -Dclojure.compile.path=/home/milica/stack-exchange/target/classes -Dhelloclojureapp.version=0.1.0-SNAPSHOT -Dclojure.debug=false
+Evaluation count : 84360 in 60 samples of 1406 calls.
+      Execution time sample mean : 733.818423 µs
+             Execution time mean : 734.155137 µs
+Execution time sample std-deviation : 25.172348 µs
+    Execution time std-deviation : 25.489138 µs
+   Execution time lower quantile : 710.140211 µs ( 2.5%)
+   Execution time upper quantile : 797.733786 µs (97.5%)
+                   Overhead used : 0.887243 ns
+
+Found 3 outliers in 60 samples (5.0000 %)
+	low-severe	 3 (5.0000 %)
+ Variance from outliers : 20.6525 % Variance is moderately inflated by outliers
