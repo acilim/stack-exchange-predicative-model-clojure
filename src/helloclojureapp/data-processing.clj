@@ -19,21 +19,24 @@
     (json/read-str
       (slurp not-closed-questions-file) :key-fn keyword) :items))
 
-(defn getScore [question]
-  (get question :score))
+(defn getScore
+  [question]
+  (:score question))
 
-(defn getUserId [question]
-  (get (get question :owner) :user_id))
+(defn getUserId
+  [question]
+  (:user_id (:owner question)))
 
 (defn getUser
   "Gets user's data with given id"
   [id]
   (first
-    (get
-      (get-user-by-id-from-api id) :items)))
+    (:items
+      (get-user-by-id-from-api id))))
 
-(defn getBody [question]
-  (get question :body))
+(defn getBody
+  [question]
+  (:body question))
 
 (defn getAgeOfAccount
   "Calculates the value of feature A1: ageOfAccount"
@@ -42,59 +45,61 @@
   (-
     (.getTime
       (new java.util.Date))
-    (if (nil? (get
+    (if (nil? (:creation_date
                 (getUser
-                  (getUserId question)) :creation_date))
+                  (getUserId question))))
       0
-      (get
+      (:creation_date
         (getUser
-          (getUserId question)) :creation_date))))
+          (getUserId question))))))
 
-(defn getBadges [question]
+(defn getBadges
+  [question]
   (get
     (get-badges-by-user-id-from-api
       (getUserId question)) :items))
 
-(defn getBadgeData [badge]
+(defn getBadgeData 
+  [badge]
   (get-badge-by-id-from-api
-    (get badge :badge_id)))
+    (:badge_id badge)))
 
-(defn getBadge [id]
+(defn getBadge
+  [id]
   (first
-    (get
-      (get-badge-by-id-from-api id) :items)))
+    (:items
+      (get-badge-by-id-from-api id))))
 
 (defn getBadgeScore 
   "Calculates the value of feature A2 : badgeScore"
   [question]
   (println "Getting feature A2...")
   (let [score (atom 0)]
-    (doseq 
-      [badge (getBadges question)] 
-      (if 
-        (> 
-          (get
-            (getBadge
-              (get badge :badge_id)) :award_count) 0)
-        (swap!
-          score
-          #(+ % (/ 1.0 (get badge :award_count))))))
+    (doseq [badge (getBadges question)] 
+      (if (> (:award_count
+               (getBadge
+                 (:badge_id badge)))
+             0)
+        (swap! score  #(+ % (/ 1.0 (:award_count badge))))))
     @score))
 
-(defn getQuestionsByUser [question]
-  (get
+(defn getQuestionsByUser 
+  [question]
+  (:items
     (get-user's-questions-from-api
-      (getUserId question)) :items))
+      (getUserId question))))
 
-(defn getAnswersByUser [question]
-  (get
+(defn getAnswersByUser 
+  [question]
+  (:items
     (get-user's-answers-from-api
-      (getUserId question)) :items))
+      (getUserId question))))
 
-(defn getCommentsByUser [question]
-  (get
+(defn getCommentsByUser 
+  [question]
+  (:items
     (get-user's-comments-from-api
-      (getUserId question)) :items))
+      (getUserId question))))
 
 (defn getPostsWithNegativeScores
   "Calculates the value of feature A3 : postsWithNegativeScores"
@@ -102,11 +107,11 @@
   (println "Getting feature A3...")
   (let [score (atom 0)]
     (doseq [q (getQuestionsByUser question)] 
-      (if (<  (get q :score) 0)
-        (swap! score #(+ % 1))))
+      (if (neg? (:score q))
+        (swap! score #(inc %))))
     (doseq [a (getAnswersByUser question)] 
-      (if (<  (get a :score) 0)
-        (swap! score #(+ % 1))))
+      (if (neg?  (:score a))
+        (swap! score #(inc %))))
     @score))
 
 (defn getPostScore
@@ -115,9 +120,9 @@
   (println "Getting feature B1...")
   (let [score (atom 0)]
     (doseq [q (getQuestionsByUser question)] 
-      (swap! score #(+ % (get q :score))))
+      (swap! score #(+ % (:score q))))
     (doseq [a (getAnswersByUser question)] 
-      (swap! score #(+ % (get a :score))))
+      (swap! score #(+ % (:score q))))
     @score))
 
 (defn getAcceptedAnswerScore
@@ -126,7 +131,7 @@
   (println "Getting feature B2...")
   (let [score (atom 0)]
     (doseq [a (getAnswersByUser question)] 
-      (if (= (get a :is_accepted) true)
+      (if (= (:is_accepted a) true)
         (swap! score #(+ % 15))))
     @score))
 
@@ -136,7 +141,7 @@
   (println "Getting feature B3...")
   (let [score (atom 0)]
     (doseq [c (getCommentsByUser question)] 
-      (swap! score #(+ % (get c :score))))
+      (swap! score #(+ % (:score c))))
     @score))
 
 (defn getNumberOfURLs
@@ -161,7 +166,7 @@
   [question]
   (println "Getting feature D1...")  
   (count
-    (get question :title)))
+    (:title question)))
 
 (defn getBodyLength
   "Calculates the value of feature D2 : bodyLength"
@@ -175,7 +180,7 @@
   [question]
   (println "Getting feature D3...")  
   (count
-    (get question :tags)))
+    (:tags question)))
 
 (defn getNumberOfPunctuationMarks
   "Calculates the value of feature D4 : numberOfPunctuationMarks"
@@ -193,7 +198,7 @@
   (let [number (atom 0)]
     (doseq [word (clojure.string/split (getBody question) #"\s+")] 
       (if (< (count word) 4)
-        (swap! number #(+ % 1))))
+        (swap! number #(inc %))))
     @number))
 
 (defn getNumberOfSpecialCharacters
@@ -231,9 +236,7 @@
     (doseq [match (re-seq
                     (re-pattern "<code>(.*?)</code>")
                     (getBody question))]
-      (swap! 
-        length 
-        #(+ % (count (second match)))))
+      (swap!  length  #(+ % (count (second match)))))
     @length))
 
 (defn get-features 
