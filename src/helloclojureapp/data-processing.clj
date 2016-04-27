@@ -10,14 +10,16 @@
   "data/testSet.csv")
 
 (def closed-questions-json 
-  (get
+  (:items
     (json/read-str
-      (slurp closed-questions-file) :key-fn keyword) :items))
+      (slurp closed-questions-file)
+      :key-fn keyword)))
 
 (def not-closed-questions-json
-  (get
+  (:items
     (json/read-str
-      (slurp not-closed-questions-file) :key-fn keyword) :items))
+      (slurp not-closed-questions-file)
+      :key-fn keyword)))
 
 (defn getScore
   [question]
@@ -25,7 +27,8 @@
 
 (defn getUserId
   [question]
-  (:user_id (:owner question)))
+  (:user_id
+    (:owner question)))
 
 (defn getUser
   "Gets user's data with given id"
@@ -55,9 +58,9 @@
 
 (defn getBadges
   [question]
-  (get
+  (:items
     (get-badges-by-user-id-from-api
-      (getUserId question)) :items))
+      (getUserId question))))
 
 (defn getBadgeData 
   [badge]
@@ -76,10 +79,9 @@
   (println "Getting feature A2...")
   (let [score (atom 0)]
     (doseq [badge (getBadges question)] 
-      (if (> (:award_count
+      (if (pos? (:award_count
                (getBadge
-                 (:badge_id badge)))
-             0)
+                 (:badge_id badge))))
         (swap! score  #(+ % (/ 1.0 (:award_count badge))))))
     @score))
 
