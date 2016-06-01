@@ -318,6 +318,33 @@
     test-set-file
     (take-last 100 closed-questions-json)
     (take-last 100 not-closed-questions-json)))
+  
+(defn save-instance
+  [question]
+  (with-open [wrtr (io/writer "data/instance.csv")]
+    (csv/write-csv 
+      wrtr
+      [["age_of_account"
+        "badge_score"
+        "posts_with_neg_score"
+        "post_score"
+        "accepted_answer_score"
+        "comment_score" 
+        "num_of_URLs" 
+        "num_of_stackOverflow_URLs"
+        "title_length" 
+        "body_length"
+        "num_of_tags"
+        "num_of_punctuation_marks"
+        "num_of_short_words" 
+        "num_of_special_characters"
+        "num_of_lower_case_characters" 
+        "num_of_upper_case_characters"
+        "code_snippet_length"
+        "class"]])
+    (csv/write-csv
+      wrtr 
+      [(get-features question "closed")])))
 
 ;;(create-training-dataset)
 ;;(create-test-dataset)
