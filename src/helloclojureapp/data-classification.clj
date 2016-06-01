@@ -19,6 +19,9 @@
 (def classifier-evaluation-file
   "data/results.txt")
 
+(def classifier-file
+  "data/classifier.txt")
+
 (def discretize
   (make-filter :unsupervised-discretize
                {:dataset-format training-set
@@ -108,8 +111,34 @@
   (measure-performance-of support-vector-machines-classifier)
   (measure-performance-of logistic-regression-classifier))
 
+(defn save-classifier
+  []
+  (serialize-to-file naive-bayes-classifier classifier-file))
+
+(defn classify-question
+  [user-id text]
+  (let [question {:owner {:user_id user-id}
+                  :score 0
+                  :body text
+                  :tags []}]   
+    (save-instance question)
+    (classifier-classify
+      (deserialize-from-file classifier-file)
+      (.get
+        (prepare-dataset
+          (load-instances :csv "data/instance.csv"))
+        0))))
+
+(defn classify
+  [user-id text]
+  (let [closed (classify-question user-id text)]
+    (if (= closed 0.0)
+      (print-str "Your question is likely to be closed!")
+      (print-str "Your quesiton is not likely to be closed."))))
+
 ;;(train-classifiers)
 ;;(save-results)
 ;;(measure-performance)
+;;(save-classifier)
 
 
