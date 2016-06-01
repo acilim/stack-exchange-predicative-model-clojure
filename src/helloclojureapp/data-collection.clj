@@ -1,4 +1,4 @@
-(ns helloclojureapp.data-collection
+(ns machinelearning.data-collection
   (:require [clj-http.client :as client]
             [clojure.data.json :as json])
   (:use [clojure.java.io :as io]))
