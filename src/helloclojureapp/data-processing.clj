@@ -1,7 +1,7 @@
-(ns helloclojureapp.data-processing
+(ns machinelearning.data-processing
   (:require [clojure.data.json :as json]
             [clojure.data.csv :as csv])
-  (:use [helloclojureapp.data-collection]
+  (:use [machinelearning.data-collection]
         [clojure.java.io :as io]))
 
 (def training-set-file
@@ -124,7 +124,7 @@
     (doseq [q (getQuestionsByUser question)] 
       (swap! score #(+ % (:score q))))
     (doseq [a (getAnswersByUser question)] 
-      (swap! score #(+ % (:score q))))
+      (swap! score #(+ % (:score a))))
     @score))
 
 (defn getAcceptedAnswerScore
@@ -318,7 +318,7 @@
     test-set-file
     (take-last 100 closed-questions-json)
     (take-last 100 not-closed-questions-json)))
-  
+
 (defn save-instance
   [question]
   (with-open [wrtr (io/writer "data/instance.csv")]
@@ -344,7 +344,7 @@
         "class"]])
     (csv/write-csv
       wrtr 
-      [(get-features question "closed")])))
+      [(get-features question "not_closed")])))
 
 ;;(create-training-dataset)
 ;;(create-test-dataset)
