@@ -1,11 +1,12 @@
-(ns helloclojureapp.data-classification
+(ns machinelearning.data-classification
   (:use [clj-ml.io]
         [clj-ml.filters]
         [clj-ml.classifiers]
         [clj-ml.data]
         [clj-ml.utils]
         [clojure.java.io :as io]
-        [helloclojureapp.data-processing])
+        [machinelearning.data-processing]
+        [criterium.core])
   (:import [weka.core.converters ArffLoader CSVLoader]
            [weka.classifiers.bayes NaiveBayes]
            [java.io File]))
@@ -140,5 +141,3 @@
 ;;(save-results)
 ;;(measure-performance)
 ;;(save-classifier)
-
-
