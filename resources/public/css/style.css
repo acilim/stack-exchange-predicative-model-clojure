@@ -16,12 +16,13 @@
     padding: 0px 0px 10px 40px;
     display: block;
     border-bottom:1px solid #E4E4E4;
-    margin: -10px -15px 30px -10px;;
+    margin: -10px -15px 30px -10px;
     color: #888;
 }
 .basic-grey h2 {
     display: block;
     font-size: 20px;
+    padding: 0px 0px 10px 30px;
 }
 .basic-grey label {
     font-size: 18px;
@@ -60,6 +61,7 @@
     border-radius: 3px;
     text-shadow: 1px 1px 1px #9E3F3F;
     cursor: pointer;
+    margin: 10px 20px 10px 175px;
 }
 .basic-grey button:hover {
     background: #CF7A7A
